@@ -40,7 +40,10 @@ export function UploadComponent({ userId }: Props) {
   const [uploadState, setUploadState] = useState(false);
 
   const [open, setOpen] = useState(false);
+
   const [fileList, setFileList] = useState<Array<FileItem>>([]);
+
+  const [refreshNounce, setRefreshNounce] = useState(0);
 
   useEffect(() => {
     const userRootPath = `models/${userId}/`;
@@ -62,7 +65,7 @@ export function UploadComponent({ userId }: Props) {
         });
       });
     });
-  }, []);
+  }, [refreshNounce]);
 
   function handleFileUpload() {
     setUploadState(true);
@@ -150,7 +153,14 @@ export function UploadComponent({ userId }: Props) {
           Success!
         </Header>
         <Modal.Actions>
-          <Button color="green" inverted onClick={() => setOpen(false)}>
+          <Button
+            color="green"
+            inverted
+            onClick={() => {
+              setOpen(false);
+              setRefreshNounce(refreshNounce + 1);
+            }}
+          >
             <Icon name="checkmark" /> OK
           </Button>
         </Modal.Actions>
