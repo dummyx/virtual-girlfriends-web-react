@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader";
@@ -9,7 +9,8 @@ import { Label } from "semantic-ui-react";
 import { useLayoutEffect } from "react";
 
 type Props = {
-  file: File;
+  fileUrl: string;
+  fileName: string;
 };
 
 const loader = new GLTFLoader();
@@ -32,7 +33,7 @@ const useWindowSize = (): number[] => {
   return size;
 };
 
-export function GltfCanvas({ file }: Props) {
+export function GltfCanvas({ fileUrl, fileName }: Props) {
   const gltfCanvasParentRef = useRef<HTMLDivElement>(null);
   const [canvasWidthAndHeight, setCanvasWidthAndHeight] = useState<number>(0);
   const windowSize = useWindowSize();
@@ -49,21 +50,17 @@ export function GltfCanvas({ file }: Props) {
       return new VRMLoaderPlugin(parser);
     });
 
-    loader.load(URL.createObjectURL(file), (tmpGltf) => {
+    loader.load(fileUrl, (tmpGltf) => {
       setGltf(tmpGltf);
     });
-  }, [windowSize, file]);
+  }, [windowSize, fileUrl]);
 
   return (
     <div
       ref={gltfCanvasParentRef}
       style={{ height: `${canvasWidthAndHeight}px` }}
     >
-      <Label
-        content={`Previewing ${
-          file == null ? "AliciaSolid_vrm-0.51.vrm" : file.name
-        }`}
-      ></Label>
+      <Label content={`Previewing ${fileName}`}></Label>
       <Canvas
         frameloop="demand"
         camera={{ fov: 20, near: 0.1, far: 300, position: [0, 1, -11] }}
